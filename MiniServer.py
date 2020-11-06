@@ -37,30 +37,29 @@ def getSourceConverted(sourceDir: str):
 
          search_result = list(dict.fromkeys(regex.findall(file_lines))) # delete duplicated search results
 
-         print(len(search_result) + " found.")
+         print(str(len(search_result)) + " key found.")
 
          for cs in search_result:
             try:
                key_str = str(cs[2:-2]).strip() # remind '{{ }}'
+               key_val = ""
                
                # TODO: Parameter-available function
                if key_str.endswith(')'): # -> function
                   try:
-                     print(key_str[:-2] + "()")
-                     key_str = str(globals()[key_str[:-2]]())
+                     key_val = str(globals()[key_str[:-2]]())
                   except Exception:
-                     print("Failed to find/run function \"" + key_str[:-2] + "\"")
+                     print("Failed to find/run function \"" + key_str + "\"")
                else: # -> variable
-                  key_str = str(globals()[key_str])
+                  key_val = str(globals()[key_str])
 
-               print(str(cs) + ":" + key_str)
-               file_lines = file_lines.replace(str(cs), key_str)
+               print(key_str + ":\"" + key_val + "\"")
+               file_lines = file_lines.replace(str(cs), key_val)
             except KeyError:
                print("No any key found.\nSearched \"" + cs + "\" with key, \"" + key_str + "\"")
 
-            return file_lines
+         return file_lines
 
-         return None
    except FileNotFoundError:
       print("Failed to find source \"" + sourceDir + "\"")
       return None
